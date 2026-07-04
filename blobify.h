@@ -66,8 +66,12 @@ struct blb_blob_t{
 };
 
 blb_blob_t *blb_blob_create(uint32_t size, uint8_t step);
-void blb_blob_delete(blb_blob_t *blob);
 
+void blb_blob_delete(blb_blob_t *blob);
 bool blb_blob_step(blb_blob_t *blob, int32_t step);
+bool blb_blob_put(blb_blob_t *blob, uint8_t value);
+bool blb_blob_get(blb_blob_t *blob, uint8_t *value);
+bool blb_blob_jump(blb_blob_t *blob, uint32_t offset);
+void blb_blob_print(blb_blob_t *blob, FILE *output);
 
 #endif
