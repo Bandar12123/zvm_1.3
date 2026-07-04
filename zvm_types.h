@@ -46,7 +46,7 @@ struct zvm_cpu_t{
     zvm_instruction_t* IR;
     uint8_t R[ZVM_RX_REGISTERS_COUNT];
     uint8_t FLAGS;
-    int8_t SP;
+    int32_t SP;
 };
 
 struct zvm_exception_metadata_t{
