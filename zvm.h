@@ -10,7 +10,7 @@
 #include "zvm_api.h"
 
 /* ZVM */
-bool zvm_init(zvm_vm_t *vm); /* zvm_boot */
+bool zvm_init(zvm_vm_t *vm, uint32_t data_size, uint32_t stack_size, uint32_t code_size);
 void zvm_release(zvm_vm_t *vm);
 
 static bool zvm_init_io(zvm_vm_t *vm);
@@ -24,6 +24,6 @@ static bool zvm_execute(zvm_vm_t *vm);
 bool zvm_except(zvm_vm_t *vm);
 
 int zvm_run(zvm_vm_t *vm);
-int zvm_main(zvm_vm_t *vm, uint8_t *program, uint8_t program_size);
-
+int  zvm_main(zvm_vm_t *vm, uint8_t *program, uint32_t program_size,
+              uint32_t data_size, uint32_t stack_size, uint32_t code_size);
 #endif
