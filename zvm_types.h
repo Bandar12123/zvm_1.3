@@ -13,6 +13,12 @@
 
 #define ZVM_INST_MAX_OPERANDS  3
 
+#include "blobify.h"
+
+#define ZVM_DEFAULT_DATA_SIZE   64
+#define ZVM_DEFAULT_STACK_SIZE  64
+#define ZVM_DEFAULT_CODE_SIZE   128
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -92,14 +98,13 @@ struct zvm_exception_entry_t{
     char *message;
 };
 
-struct zvm_program_t{
-    uint8_t data[ZVM_PROGRAM_DEFAULT_DATA_SEGMENT_SIZE];
-    uint8_t stack[ZVM_PROGRAM_DEFAULT_STACK_SEGMENT_SIZE];
-    zvm_instruction_t instructions[ZVM_PROGRAM_DEFAULT_CODE_SEGMENT_SIZE];
-
-    int8_t data_count;
-    int8_t instructions_count;
-    int8_t stack_counts;
+struct zvm_program_t {
+    blb_blob_t *data;
+    blb_blob_t *stack;
+    blb_blob_t *instructions;
+    int32_t data_count;
+    int32_t instructions_count;
+    int32_t stack_counts;
 };
 
 struct zvm_vm_t{
