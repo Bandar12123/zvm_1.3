@@ -141,40 +141,54 @@ int zvm_run(zvm_vm_t *vm){
 
 /* ── Load program from raw byte array ───────── */
 bool zvm_load_program(zvm_vm_t *vm, const uint8_t *program, uint32_t program_size){
-    if(!vm || !program) return false;
-    if(program_size == 0) return true;
-
-    if((program_size % ZVM_INSTRUCTION_SIZE) != 0){
-        zvm_raise(vm, LOAD, LOAD_PROGRAM) return false;
+    if(vm == NULL || program == NULL){
+        return false;
     }
 
-    uint32_t count = program_size / ZVM_INSTRUCTION_SIZE;
-    uint32_t max   = vm->program.instructions->block->size / sizeof(zvm_instruction_t);
-
-    if(count > max){
-        zvm_raise(vm, LOAD, LOAD_PROGRAM) return false;
+    if(program_size == 0){
+        return true;
     }
 
-    vm->program.instructions_count = (int32_t)count;
-    vm->program.data_count         = 0;
-    vm->program.stack_counts       = 0;
+    if(((program_size % ZVM_INSTRUCTION_SIZE) != 0)){
+        zvm_raise(vm, LOAD, LOAD_PROGRAM)
+        return false;
+    }
 
-    for(uint32_t i = 0; i < program_size; i += ZVM_INSTRUCTION_SIZE){
-        uint8_t opcode         = program[i + 0];
-        uint8_t left_operand   = program[i + 1];
-        uint8_t right_operand  = program[i + 2];
-        uint8_t output_operand = program[i + 3];
+    uint8_t instructions_count = program_size / ZVM_INSTRUCTION_SIZE;
+    uint8_t opcode = 0, left_operand = 0, right_operand = 0, output_operand = 0;
 
-        uint32_t idx = i / ZVM_INSTRUCTION_SIZE;
+    vm->program.instructions_count = instructions_count;
+    vm->program.data_count = 0;
+    vm->program.stack_counts = 0;
+
+    // حجز مساحة التعليمات ديناميكياً
+    vm->program.instructions = malloc(sizeof(zvm_instruction_t) * instructions_count);
+    if (!vm->program.instructions) {
+        zvm_raise(vm, VM, VM_INIT);
+        return false;
+    }
+
+    vm->program.data_blob = blb_blob_create(ZVM_PROGRAM_DEFAULT_DATA_SEGMENT_SIZE, 1);
+    vm->program.stack_blob = blb_blob_create(ZVM_PROGRAM_DEFAULT_STACK_SEGMENT_SIZE, 1);
+
+    for(int i = 0; i < program_size; i += ZVM_INSTRUCTION_SIZE){
+        opcode         = program[0 + i];
+        left_operand   = program[1 + i];
+        right_operand  = program[2 + i];
+        output_operand = program[3 + i];
+
+        uint8_t idx = (i / ZVM_INSTRUCTION_SIZE);
+
         zvm_instruction_t *inst = zvm_program_instruction(vm, idx);
 
-        inst->metadata             = (zvm_instruction_metadata_t*)&instruction_handlers[opcode];
+        inst->metadata = (zvm_instruction_metadata_t*)&instruction_handlers[opcode];
         inst->operands[0].metadata = (zvm_operand_metadata_t*)&instruction_handlers[opcode].operands[0];
         inst->operands[1].metadata = (zvm_operand_metadata_t*)&instruction_handlers[opcode].operands[1];
         inst->operands[2].metadata = (zvm_operand_metadata_t*)&instruction_handlers[opcode].operands[2];
-        inst->operands[0].value    = left_operand;
-        inst->operands[1].value    = right_operand;
-        inst->operands[2].value    = output_operand;
+
+        inst->operands[0].value = left_operand;
+        inst->operands[1].value = right_operand;
+        inst->operands[2].value = output_operand;
     }
     return true;
 }

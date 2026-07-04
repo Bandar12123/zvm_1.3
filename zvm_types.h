@@ -99,12 +99,15 @@ struct zvm_exception_entry_t{
 };
 
 struct zvm_program_t {
-    blb_blob_t *data;
-    blb_blob_t *stack;
-    blb_blob_t *instructions;
-    int32_t data_count;
-    int32_t instructions_count;
-    int32_t stack_counts;
+    
+    blb_blob_t *data_blob;
+    blb_blob_t *stack_blob;
+    
+    zvm_instruction_t *instructions;
+
+    int8_t data_count;
+    int8_t instructions_count;
+    int8_t stack_counts;
 };
 
 struct zvm_vm_t{

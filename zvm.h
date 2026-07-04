@@ -9,13 +9,15 @@
 #include "zvm_types.h"
 #include "zvm_api.h"
 
+#define zvm_program_instruction(vm, idx) (&((vm)->program.instructions[(idx)]))
+
 /* ZVM */
 bool zvm_init(zvm_vm_t *vm, uint32_t data_size, uint32_t stack_size, uint32_t code_size);
 void zvm_release(zvm_vm_t *vm);
 
 static bool zvm_init_io(zvm_vm_t *vm);
 
-bool zvm_load_program(zvm_vm_t* vm, const uint8_t *program, uint8_t program_size);
+bool zvm_load_program(zvm_vm_t* vm, const uint8_t *program, uint32_t program_size);
 
 static bool zvm_fetch(zvm_vm_t *vm);
 static bool zvm_decode(zvm_vm_t *vm);
