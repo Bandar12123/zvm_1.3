@@ -13,4 +13,6 @@ int main(void){
         12, R0, R1, R2,
     };
     
-return zvm_main(&vm, program, sizeof(program), 0, 0, 0);}
+return zvm_main(&vm, program, sizeof(program));
+
+}
